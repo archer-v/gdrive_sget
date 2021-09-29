@@ -1,6 +1,6 @@
 # gdrive_sget
 Simple unix utility to download shared files from google drive. 
-This is bash script using curl and some postprocessing logic.
+This is a bash script using curl and some postprocessing logic.
 
 You can use it to download public shared files without any Google Drive interactive authorization or OAuth tokens
 
