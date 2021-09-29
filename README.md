@@ -4,9 +4,10 @@ This is a bash script using curl and some postprocessing logic.
 
 You can use it to download public shared files without any Google Drive interactive authorization or OAuth tokens
 
-**Usage: ./gdrive_sget (URL|fileID) [filename_write_to]**
+### Usage
+**./gdrive_sget (URL|fileID) [filename_write_to]**
 
-examples:
+### Examples
 ```
     ./gdrive_sget 1eyNA5oZNFhDUzft3Bo-Ud9XR8GAiENXd
     ./gdrive_sget https://drive.google.com/file/d/1eyNA5oZNFhDUzft3Bo-Ud9XR8GAiENXd/view?usp=sharing
@@ -15,7 +16,7 @@ examples:
 
 On succes exit code is 0, curl error codes are passed to the output as is
 
-Output example:
+### Output example:
 ```
 Trying to download the file with id 1eyNA5oZNFhDUzft3Bo-Ud9XR8GAiENXd
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
@@ -28,3 +29,5 @@ Trying to download the file with id 1eyNA5oZNFhDUzft3Bo-Ud9XR8GAiENXd
 ```
 The last line is the status line with the format: HTTP_CODE, MIME-TYPE, DOWLOADED_SIZE, FILE_NAME
 
+### Limitation
+    Google restricts direct downloading files of some mime-types and with the resourcekey parameter in the download URL. Use utilities interacting with Google Drive API to download these files.
