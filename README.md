@@ -30,4 +30,4 @@ Trying to download the file with id 1eyNA5oZNFhDUzft3Bo-Ud9XR8GAiENXd
 The last line is the status line with the format: HTTP_CODE, MIME-TYPE, DOWLOADED_SIZE, FILE_NAME
 
 ### Limitation
-    Google restricts direct downloading files of some mime-types and with the resourcekey parameter in the download URL. Use utilities interacting with Google Drive API to download these files.
+Google restricts direct downloading files of some mime-types and with the resourcekey parameter in the download URL. Use utilities interacting with Google Drive API to download these files.
