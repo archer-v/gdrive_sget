@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#Linux cli utility to download shared file from google drive 
+
+COOKIE_DIR='/tmp'
+CURL_OUTPUT_PARAM="-J -O"
+ERR=0
+URL_PREFIX="https://drive.google.com/uc?export=download"
+
+exit_on_err(){
+    if [ $1 -ne 0 ]; then
+        rm -f $COOKIE_FILE
+        echo "Failed: $1"
+	if [ $1 -ge 100 ]; then
+	    exit 100
+	fi
+        exit $1
+    fi
+}
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 (URL|FileID) [filename write to]"
+    exit 1
+fi
+
+[ -n "$2" ] && CURL_OUTPUT_PARAM="-o $2"
+
+#check ID format
+FILE_ID=`echo "$1" | grep -oP "[a-zA-Z0-9_-]{20,}"`
+
+#if wrong, try to invoke the FILE_ID from the URL
+if [ -z "$FILE_ID" ]; then
+    FILE_ID=`echo "$1" | sed 's/.*\/\([a-zA-Z0-9_-]\{20,\}\)\/.*/\1/'`
+    #if failed, perhaps it is already an ID
+    if [ "$FILE_ID" = $1 ]; then
+        echo "Wrong file ID"
+        exit_on_err 100
+    fi
+fi
+
+echo "Trying to download the file with id $FILE_ID"
+
+COOKIE_TMP=`xxd -l 16 -c 16 -p < /dev/urandom`
+COOKIE_FILE="$COOKIE_DIR/$COOKIE_TMP"
+
+#get the cookie
+HTTP_CODE=`curl -s -c $COOKIE_FILE "$URL_PREFIX&id=${FILE_ID}" -w "%{http_code}" -o /dev/null`
+exit_on_err $?
+
+[ $HTTP_CODE -ne 200 -a $HTTP_CODE -ne 302 ] && exit_on_err $HTTP_CODE
+
+SESSION_CODE="$(awk '/_warning_/ {print $NF}' $COOKIE_FILE)"
+#do downloading
+curl -Lb $COOKIE_FILE "$URL_PREFIX&confirm=${SESSION_CODE}&id=${FILE_ID}" ${CURL_OUTPUT_PARAM} -w "%{http_code},%{content_type},%{size_download},%{filename_effective}\n" || ERR=$?
+rm $COOKIE_FILE
+exit $ERR
+
